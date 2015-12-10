@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_compose" android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="101" app:showAsAction="always" android:title="@string/action_compose"/>
+    <item android:id="@+id/action_save" android:icon="@android:drawable/ic_menu_save"
+        android:orderInCategory="102" app:showAsAction="always" android:title="@string/action_save"/>
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="105" app:showAsAction="never" />
+    <item android:id="@+id/action_refresh" android:title="@string/action_refresh"
+        android:orderInCategory="110" app:showAsAction="never" />
+    <item android:id="@+id/action_dumpdb" android:title="@string/action_dumpdb"
+        android:orderInCategory="110" app:showAsAction="never" />
+</menu>
