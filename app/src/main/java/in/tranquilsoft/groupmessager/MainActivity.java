@@ -17,8 +17,8 @@ import java.util.List;
 
 import in.tranquilsoft.groupmessager.consumer.MultiResultSqliteConsumer;
 import in.tranquilsoft.groupmessager.consumer.SingleResultSqliteConsumer;
-import in.tranquilsoft.groupmessager.model.impl.ContactGroup;
 import in.tranquilsoft.groupmessager.model.DefaultEntity;
+import in.tranquilsoft.groupmessager.model.impl.ContactGroup;
 import in.tranquilsoft.groupmessager.task.ContactsGathererTask;
 import in.tranquilsoft.groupmessager.task.QueryForAllIdSqliteTask;
 import in.tranquilsoft.groupmessager.util.Constants;

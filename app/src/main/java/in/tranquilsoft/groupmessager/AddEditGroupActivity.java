@@ -85,10 +85,10 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
         groupName = (EditText) findViewById(R.id.groupName);
         container = (LinearLayout) findViewById(R.id.container);
         contacts = (ListView) findViewById(R.id.contacts);
-        sendMsgLayout = (LinearLayout)findViewById(R.id.sendMessageLayout);
-        sms = (EditText)findViewById(R.id.sms);
-        Button sendBtn = (Button)findViewById(R.id.sendBtn);
-        Button closeBtn = (Button)findViewById(R.id.closeBtn);
+        sendMsgLayout = (LinearLayout) findViewById(R.id.sendMessageLayout);
+        sms = (EditText) findViewById(R.id.sms);
+        Button sendBtn = (Button) findViewById(R.id.sendBtn);
+        Button closeBtn = (Button) findViewById(R.id.closeBtn);
 
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,9 +197,9 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
         } else if (requestType == QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST) {
             if (entities != null) {
                 selectedContactIds.removeAll(selectedContactIds);
-                for (Object gcj: entities) {
-                    selectedContactIds.add(((GroupContactJunction)gcj).getContactId());
-                    Log.e(TAG, "selected contact id:"+((GroupContactJunction)gcj).getContactId());
+                for (Object gcj : entities) {
+                    selectedContactIds.add(((GroupContactJunction) gcj).getContactId());
+                    Log.e(TAG, "selected contact id:" + ((GroupContactJunction) gcj).getContactId());
                 }
             }
             Log.e(TAG, "requestType == QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST. initCompleted to true");
@@ -224,7 +224,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             final boolean[] initCompleted = new boolean[1];
             TextView name = (TextView) row.findViewById(R.id.name);
             TextView phone = (TextView) row.findViewById(R.id.phone);
-            LinearLayout cbxL = (LinearLayout)row.findViewById(R.id.chkbxLayout);
+            LinearLayout cbxL = (LinearLayout) row.findViewById(R.id.chkbxLayout);
             cbxL.removeAllViews();
             CheckBox cbx = new CheckBox(AddEditGroupActivity.this);
             cbxL.addView(cbx);
@@ -232,8 +232,8 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             cbx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.e(TAG, "setOnCheckedChangeListener.isChecked:"+isChecked+", contact:"
-                            +contact.getId()+", IC:"+initCompleted[0]);
+                    Log.e(TAG, "setOnCheckedChangeListener.isChecked:" + isChecked + ", contact:"
+                            + contact.getId() + ", IC:" + initCompleted[0]);
                     if (initCompleted[0]) {
                         if (isChecked) {
                             if (Utility.isEmpty(groupName.getText().toString())) {
@@ -247,7 +247,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                                     final GroupContactJunction gcj = new GroupContactJunction();
                                     gcj.setContactGroupId(selectedGroupId);
                                     gcj.setContactId(contact.getId());
-                                    new AsyncTask<Void, Void, Void>(){
+                                    new AsyncTask<Void, Void, Void>() {
 
                                         @Override
                                         protected Void doInBackground(Void... params) {
@@ -268,8 +268,8 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                                 selectedContactIds.add(contact.getId());
                             }
                         } else if (!isChecked) {
-                            Log.e(TAG, "Removing a junction."+contact.getId());
-                            new AsyncTask<Void,Void,Void>(){
+                            Log.e(TAG, "Removing a junction." + contact.getId());
+                            new AsyncTask<Void, Void, Void>() {
 
                                 @Override
                                 protected Void doInBackground(Void... params) {
@@ -300,8 +300,6 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                     initCompleted[0] = true;
                 }
             }
-
-
 
 
             return row;

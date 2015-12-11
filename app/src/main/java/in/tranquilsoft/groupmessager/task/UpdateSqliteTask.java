@@ -12,7 +12,7 @@ import in.tranquilsoft.groupmessager.model.DefaultEntity;
  * Created by gurdevp on 05/12/15.
  */
 public class UpdateSqliteTask extends AsyncTask<Void, Void, Void> {
-    String TAG="UpdateSqliteTask";
+    String TAG = "UpdateSqliteTask";
     Context context;
     DefaultEntity entity;
     UpdateDBConsumer sqliteConsumer;
@@ -42,7 +42,7 @@ public class UpdateSqliteTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        Log.e(TAG, "error:"+error);
+        Log.e(TAG, "error:" + error);
         sqliteConsumer.performOnUpdateResult(requestType,
                 error != null ? InsertDBConsumer.FAILED : InsertDBConsumer.SUCCESS, error);
     }

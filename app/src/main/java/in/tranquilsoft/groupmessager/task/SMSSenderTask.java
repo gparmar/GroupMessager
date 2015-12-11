@@ -13,6 +13,7 @@ import android.util.Log;
 import java.util.List;
 
 import in.tranquilsoft.groupmessager.model.impl.Contact;
+import in.tranquilsoft.groupmessager.model.impl.MessagingHistory;
 
 /**
  * Created by gurdevp on 10/12/15.
@@ -30,24 +31,28 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
     ProgressDialog progress;
 
     public static class MySentBroadcastReceiver extends BroadcastReceiver {
-        public MySentBroadcastReceiver(){}
+        public MySentBroadcastReceiver() {
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String phone = intent.getStringExtra(CONTACT_PHONE_NUMBER);
-            long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID,-1);
-            Log.e("MySentBroadcastReceiver", "Sent message for contact grp id:"+contactGrpId+
-                    ", phone:"+phone);
+            long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID, -1);
+            Log.e("MySentBroadcastReceiver", "Sent message for contact grp id:" + contactGrpId +
+                    ", phone:" + phone);
         }
     }
 
     public static class MyDeliveryBroadcastReceiver extends BroadcastReceiver {
-        public MyDeliveryBroadcastReceiver(){}
+        public MyDeliveryBroadcastReceiver() {
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             String phone = intent.getStringExtra(CONTACT_PHONE_NUMBER);
-            long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID,-1);
-            Log.e("MyDlvryBrcastReceiver", "Delivered message for contact grp id:"+contactGrpId+
-                    ", phone:"+phone);
+            long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID, -1);
+            Log.e("MyDlvryBrcastReceiver", "Delivered message for contact grp id:" + contactGrpId +
+                    ", phone:" + phone);
         }
     }
 
@@ -76,7 +81,9 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
         Log.e(TAG, "contacts:" + contacts);
         int count = 0;
         int size = contacts.size();
-        for (Contact contact: contacts) {
+        MessagingHistory history = new MessagingHistory();
+        history.se
+        for (Contact contact : contacts) {
             SmsManager smsManager = SmsManager.getDefault();
             Intent sentIntent = new Intent(context, MySentBroadcastReceiver.class);
             sentIntent.putExtra(CONTACT_GROUP_ID, contactGrpId);
@@ -87,7 +94,7 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
             deliveryIntent.putExtra(CONTACT_GROUP_ID, contactGrpId);
             deliveryIntent.putExtra(CONTACT_PHONE_NUMBER, contact.getPhone());
             PendingIntent deliveryPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_REQUEST,
-                    deliveryIntent,PendingIntent.FLAG_ONE_SHOT);
+                    deliveryIntent, PendingIntent.FLAG_ONE_SHOT);
             smsManager.sendTextMessage(contact.getPhone(), null, sms, sentPendingIntent, deliveryPendingIntent);
             publishProgress(count++, size);
         }
@@ -100,7 +107,7 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
         super.onPostExecute(aVoid);
         progress.dismiss();
         new AlertDialog.Builder(context).setMessage("SMS has been sent to all contacts.")
-                .setPositiveButton("OK",null).show();
+                .setPositiveButton("OK", null).show();
     }
 
     @Override

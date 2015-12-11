@@ -23,22 +23,20 @@ public abstract class DefaultActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if (id == R.id.action_save) {
+        } else if (id == R.id.action_save) {
             saveClicked();
             return true;
-        }
-        else if (id == R.id.action_refresh) {
+        } else if (id == R.id.action_refresh) {
             new Contact().deleteAll(this);
             new ContactsGathererTask(this).execute();
 
             return true;
-        }else if (id == R.id.action_dumpdb) {
-            Intent dbmanager = new Intent(this,AndroidDatabaseManager.class);
+        } else if (id == R.id.action_dumpdb) {
+            Intent dbmanager = new Intent(this, AndroidDatabaseManager.class);
             startActivity(dbmanager);
 
             return true;
-        }else if (id == R.id.action_compose) {
+        } else if (id == R.id.action_compose) {
             editClicked();
             return true;
         }
@@ -65,11 +63,14 @@ public abstract class DefaultActivity extends AppCompatActivity {
 
 
     public abstract boolean showSaveMenuOption();
+
     public abstract boolean showEditMenuOption();
+
     //public abstract boolean showRefreshMenuOption();
     public void saveClicked() {
 
     }
+
     public void editClicked() {
 
     }

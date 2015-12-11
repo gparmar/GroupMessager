@@ -27,7 +27,7 @@ public class QueryForAllIdSqliteTask<T> extends AsyncTask<Void, Void, List<T>> {
 
     @Override
     protected List<T> doInBackground(Void... params) {
-        return ((DefaultEntity)entity).getAll(context);
+        return ((DefaultEntity) entity).getAll(context);
     }
 
     @Override

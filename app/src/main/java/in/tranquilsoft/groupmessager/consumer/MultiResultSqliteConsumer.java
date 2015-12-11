@@ -2,8 +2,6 @@ package in.tranquilsoft.groupmessager.consumer;
 
 import java.util.List;
 
-import in.tranquilsoft.groupmessager.model.DefaultEntity;
-
 /**
  * Created by gurdevp on 05/12/15.
  */

@@ -2,9 +2,6 @@ package in.tranquilsoft.groupmessager.util;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -45,7 +42,7 @@ public class Utility {
         return !isEmpty(str);
     }
 
-    public static void hideKeyboard(Context context, EditText et){
+    public static void hideKeyboard(Context context, EditText et) {
 
     }
 }

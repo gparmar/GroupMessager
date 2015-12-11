@@ -1,18 +1,16 @@
 package in.tranquilsoft.groupmessager.task;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import java.util.List;
 
 import in.tranquilsoft.groupmessager.consumer.MultiResultSqliteConsumer;
-import in.tranquilsoft.groupmessager.model.DefaultEntity;
 import in.tranquilsoft.groupmessager.model.impl.GroupContactJunction;
 
 /**
  * Created by gurdevp on 05/12/15.
  */
-public class QueryForGrpContactJunctionsByGrpIdSqliteTask extends QueryForAllIdSqliteTask<GroupContactJunction>{
+public class QueryForGrpContactJunctionsByGrpIdSqliteTask extends QueryForAllIdSqliteTask<GroupContactJunction> {
     private long groupId;
 
     public QueryForGrpContactJunctionsByGrpIdSqliteTask(Context context, MultiResultSqliteConsumer sqliteConsumer,

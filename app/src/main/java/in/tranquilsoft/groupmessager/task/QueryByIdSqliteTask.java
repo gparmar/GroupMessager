@@ -30,13 +30,13 @@ public class QueryByIdSqliteTask extends AsyncTask<Void, Void, DefaultEntity> {
 
     @Override
     protected DefaultEntity doInBackground(Void... params) {
-        Log.i(TAG, "Doing query by id:" +id);
+        Log.i(TAG, "Doing query by id:" + id);
         return entity.getById(context, id);
     }
 
     @Override
     protected void onPostExecute(DefaultEntity entity) {
-        Log.i(TAG, "Got result:"+entity);
+        Log.i(TAG, "Got result:" + entity);
         sqliteConsumer.performActionOnQueryResult(requestType, entity);
     }
 }

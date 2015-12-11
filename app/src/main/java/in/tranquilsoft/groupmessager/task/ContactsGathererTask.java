@@ -13,7 +13,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import in.tranquilsoft.groupmessager.model.AbstractContact;
 import in.tranquilsoft.groupmessager.model.Phone;
 import in.tranquilsoft.groupmessager.model.impl.Contact;
 import in.tranquilsoft.groupmessager.util.Constants;

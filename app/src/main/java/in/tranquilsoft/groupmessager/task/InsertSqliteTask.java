@@ -40,6 +40,6 @@ public class InsertSqliteTask extends AsyncTask<Void, Void, Long> {
     @Override
     protected void onPostExecute(Long generatedId) {
         sqliteConsumer.performOnInsertResult(requestType, generatedId,
-                generatedId==-1?InsertDBConsumer.FAILED:InsertDBConsumer.SUCCESS,error);
+                generatedId == -1 ? InsertDBConsumer.FAILED : InsertDBConsumer.SUCCESS, error);
     }
 }
