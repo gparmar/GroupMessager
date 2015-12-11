@@ -37,6 +37,7 @@ import in.tranquilsoft.groupmessager.task.InsertSqliteTask;
 import in.tranquilsoft.groupmessager.task.QueryByIdSqliteTask;
 import in.tranquilsoft.groupmessager.task.QueryForAllIdSqliteTask;
 import in.tranquilsoft.groupmessager.task.QueryForGrpContactJunctionsByGrpIdSqliteTask;
+import in.tranquilsoft.groupmessager.task.SMSSenderTask;
 import in.tranquilsoft.groupmessager.task.UpdateSqliteTask;
 import in.tranquilsoft.groupmessager.util.Constants;
 import in.tranquilsoft.groupmessager.util.Utility;
@@ -96,6 +97,13 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             }
         });
 
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SMSSenderTask(selectedGroupId, sms.getText().toString(), AddEditGroupActivity.this)
+                        .execute();
+            }
+        });
 
 
         if (!addMode && groupNameStr != null) {

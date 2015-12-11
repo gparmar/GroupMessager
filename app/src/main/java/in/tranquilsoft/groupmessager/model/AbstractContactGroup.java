@@ -4,13 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import in.tranquilsoft.groupmessager.model.impl.ContactGroup;
 
 public class AbstractContactGroup extends DefaultEntity implements Parcelable {
@@ -22,28 +22,28 @@ public class AbstractContactGroup extends DefaultEntity implements Parcelable {
     public static final String[] OTHER_FIELDS = new String[]{GroupName_FIELD};
     public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(group_id integer primary key autoincrement,group_name text)";
 
-    	private long groupId;
-	private String groupName;
+    private long groupId;
+    private String groupName;
 
 
-    public AbstractContactGroup() {}
+    public AbstractContactGroup() {
+    }
 
-    	public long getGroupId(){
-		return groupId;
-	}
+    public long getGroupId() {
+        return groupId;
+    }
 
-	public void setGroupId(long groupId){
-		this.groupId = groupId;
-	}
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
 
-	public String getGroupName(){
-		return groupName;
-	}
+    public String getGroupName() {
+        return groupName;
+    }
 
-	public void setGroupName(String groupName){
-		this.groupName = groupName;
-	}
-
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
 
     @Override
@@ -53,7 +53,7 @@ public class AbstractContactGroup extends DefaultEntity implements Parcelable {
 
     @Override
     public void dropTable(SQLiteDatabase db) {
-        db.execSQL("drop table "+TABLE_NAME);
+        db.execSQL("drop table " + TABLE_NAME);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class AbstractContactGroup extends DefaultEntity implements Parcelable {
 
     @Override
     public void update(Context context) {
-        Log.i(TAG,"Updating "+this);
+        Log.i(TAG, "Updating " + this);
         ContentValues cv = new ContentValues();
         cv.put(GroupName_FIELD, getGroupName());
 
@@ -92,17 +92,17 @@ public class AbstractContactGroup extends DefaultEntity implements Parcelable {
 
     @Override
     public ContactGroup getById(Context context, long id) {
-        Log.i(TAG, "Doing query by id:"+id);
+        Log.i(TAG, "Doing query by id:" + id);
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),
-                        ID_FIELD + "= ?", new String[]{String.valueOf(id)},
-                        null, null, null);
+                ID_FIELD + "= ?", new String[]{String.valueOf(id)},
+                null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             Log.d(TAG, "Cursor was not null and move to first");
             ContactGroup contactGroup = new ContactGroup();
             contactGroup.setGroupId(cursor.getLong(0));
-contactGroup.setGroupName(cursor.getString(1));
+            contactGroup.setGroupName(cursor.getString(1));
 
             return contactGroup;
         }
@@ -114,13 +114,13 @@ contactGroup.setGroupName(cursor.getString(1));
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),
-                        null, null, null, null, null);
+                null, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             List<ContactGroup> result = new ArrayList<>();
             do {
                 ContactGroup contactGroup = new ContactGroup();
                 contactGroup.setGroupId(cursor.getLong(0));
-contactGroup.setGroupName(cursor.getString(1));
+                contactGroup.setGroupName(cursor.getString(1));
 
                 result.add(contactGroup);
             } while (cursor.moveToNext());
@@ -145,30 +145,30 @@ contactGroup.setGroupName(cursor.getString(1));
     }
 
     protected AbstractContactGroup(Parcel in) {
-        		groupId=in.readLong();
-		groupName=in.readString();
+        groupId = in.readLong();
+        groupName = in.readString();
 
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        		out.writeLong(groupId);
-		out.writeString(groupName);
+        out.writeLong(groupId);
+        out.writeString(groupName);
 
     }
 
     public static final Parcelable.Creator<AbstractContactGroup> CREATOR
-                 = new Parcelable.Creator<AbstractContactGroup>() {
-             public AbstractContactGroup createFromParcel(Parcel in) {
-                 return new AbstractContactGroup(in);
-             }
+            = new Parcelable.Creator<AbstractContactGroup>() {
+        public AbstractContactGroup createFromParcel(Parcel in) {
+            return new AbstractContactGroup(in);
+        }
 
-             public AbstractContactGroup[] newArray(int size) {
-                 return new AbstractContactGroup[size];
-             }
-         };
+        public AbstractContactGroup[] newArray(int size) {
+            return new AbstractContactGroup[size];
+        }
+    };
 
     public String toString() {
-         return "ContactGroup:["+"groupId="+groupId+ ", " +"groupName="+groupName+"]";
+        return "ContactGroup:[" + "groupId=" + groupId + ", " + "groupName=" + groupName + "]";
     }
 }

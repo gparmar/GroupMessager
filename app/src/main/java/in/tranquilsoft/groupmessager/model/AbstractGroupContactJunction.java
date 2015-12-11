@@ -4,13 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import in.tranquilsoft.groupmessager.model.impl.GroupContactJunction;
 
 public class AbstractGroupContactJunction extends DefaultEntity implements Parcelable {
@@ -18,42 +18,42 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
     public static final String TABLE_NAME = "GroupContactJunction";
     public static final String ID_FIELD = "id";
     public static final String ContactId_FIELD = "contact_id";
-public static final String ContactGroupId_FIELD = "contact_group_id";
+    public static final String ContactGroupId_FIELD = "contact_group_id";
 
-    public static final String[] OTHER_FIELDS = new String[]{ContactId_FIELD,ContactGroupId_FIELD};
+    public static final String[] OTHER_FIELDS = new String[]{ContactId_FIELD, ContactGroupId_FIELD};
     public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(id integer primary key autoincrement,contact_id integer,contact_group_id integer)";
 
-    	private long id;
-	private long contactId;
-	private long contactGroupId;
+    private long id;
+    private long contactId;
+    private long contactGroupId;
 
 
-    public AbstractGroupContactJunction() {}
+    public AbstractGroupContactJunction() {
+    }
 
-    	public long getId(){
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setId(long id){
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public long getContactId(){
-		return contactId;
-	}
+    public long getContactId() {
+        return contactId;
+    }
 
-	public void setContactId(long contactId){
-		this.contactId = contactId;
-	}
+    public void setContactId(long contactId) {
+        this.contactId = contactId;
+    }
 
-	public long getContactGroupId(){
-		return contactGroupId;
-	}
+    public long getContactGroupId() {
+        return contactGroupId;
+    }
 
-	public void setContactGroupId(long contactGroupId){
-		this.contactGroupId = contactGroupId;
-	}
-
+    public void setContactGroupId(long contactGroupId) {
+        this.contactGroupId = contactGroupId;
+    }
 
 
     @Override
@@ -63,7 +63,7 @@ public static final String ContactGroupId_FIELD = "contact_group_id";
 
     @Override
     public void dropTable(SQLiteDatabase db) {
-        db.execSQL("drop table "+TABLE_NAME);
+        db.execSQL("drop table " + TABLE_NAME);
     }
 
     @Override
@@ -74,7 +74,7 @@ public static final String ContactGroupId_FIELD = "contact_group_id";
     public long create(Context context) {
         ContentValues cv = new ContentValues();
         cv.put(ContactId_FIELD, getContactId());
-cv.put(ContactGroupId_FIELD, getContactGroupId());
+        cv.put(ContactGroupId_FIELD, getContactGroupId());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
         long result = db.insert(TABLE_NAME, null, cv);
@@ -84,10 +84,10 @@ cv.put(ContactGroupId_FIELD, getContactGroupId());
 
     @Override
     public void update(Context context) {
-        Log.i(TAG,"Updating "+this);
+        Log.i(TAG, "Updating " + this);
         ContentValues cv = new ContentValues();
         cv.put(ContactId_FIELD, getContactId());
-cv.put(ContactGroupId_FIELD, getContactGroupId());
+        cv.put(ContactGroupId_FIELD, getContactGroupId());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
         db.update(TABLE_NAME, cv, ID_FIELD + "= ?", new String[]{String.valueOf(getId())});
@@ -104,18 +104,18 @@ cv.put(ContactGroupId_FIELD, getContactGroupId());
 
     @Override
     public GroupContactJunction getById(Context context, long id) {
-        Log.i(TAG, "Doing query by id:"+id);
+        Log.i(TAG, "Doing query by id:" + id);
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),
-                        ID_FIELD + "= ?", new String[]{String.valueOf(id)},
-                        null, null, null);
+                ID_FIELD + "= ?", new String[]{String.valueOf(id)},
+                null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             Log.d(TAG, "Cursor was not null and move to first");
             GroupContactJunction groupContactJunction = new GroupContactJunction();
             groupContactJunction.setId(cursor.getLong(0));
-groupContactJunction.setContactId(cursor.getLong(1));
-groupContactJunction.setContactGroupId(cursor.getLong(2));
+            groupContactJunction.setContactId(cursor.getLong(1));
+            groupContactJunction.setContactGroupId(cursor.getLong(2));
 
             return groupContactJunction;
         }
@@ -127,14 +127,14 @@ groupContactJunction.setContactGroupId(cursor.getLong(2));
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),
-                        null, null, null, null, null);
+                null, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             List<GroupContactJunction> result = new ArrayList<>();
             do {
                 GroupContactJunction groupContactJunction = new GroupContactJunction();
                 groupContactJunction.setId(cursor.getLong(0));
-groupContactJunction.setContactId(cursor.getLong(1));
-groupContactJunction.setContactGroupId(cursor.getLong(2));
+                groupContactJunction.setContactId(cursor.getLong(1));
+                groupContactJunction.setContactGroupId(cursor.getLong(2));
 
                 result.add(groupContactJunction);
             } while (cursor.moveToNext());
@@ -159,32 +159,32 @@ groupContactJunction.setContactGroupId(cursor.getLong(2));
     }
 
     protected AbstractGroupContactJunction(Parcel in) {
-        		id=in.readLong();
-		contactId=in.readLong();
-		contactGroupId=in.readLong();
+        id = in.readLong();
+        contactId = in.readLong();
+        contactGroupId = in.readLong();
 
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        		out.writeLong(id);
-		out.writeLong(contactId);
-		out.writeLong(contactGroupId);
+        out.writeLong(id);
+        out.writeLong(contactId);
+        out.writeLong(contactGroupId);
 
     }
 
     public static final Parcelable.Creator<AbstractGroupContactJunction> CREATOR
-                 = new Parcelable.Creator<AbstractGroupContactJunction>() {
-             public AbstractGroupContactJunction createFromParcel(Parcel in) {
-                 return new AbstractGroupContactJunction(in);
-             }
+            = new Parcelable.Creator<AbstractGroupContactJunction>() {
+        public AbstractGroupContactJunction createFromParcel(Parcel in) {
+            return new AbstractGroupContactJunction(in);
+        }
 
-             public AbstractGroupContactJunction[] newArray(int size) {
-                 return new AbstractGroupContactJunction[size];
-             }
-         };
+        public AbstractGroupContactJunction[] newArray(int size) {
+            return new AbstractGroupContactJunction[size];
+        }
+    };
 
     public String toString() {
-         return "GroupContactJunction:["+"id="+id+ ", " +"contactId="+contactId+ ", " +"contactGroupId="+contactGroupId+"]";
+        return "GroupContactJunction:[" + "id=" + id + ", " + "contactId=" + contactId + ", " + "contactGroupId=" + contactGroupId + "]";
     }
 }
