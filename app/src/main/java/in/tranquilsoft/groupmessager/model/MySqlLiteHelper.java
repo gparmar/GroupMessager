@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import in.tranquilsoft.groupmessager.model.impl.Contact;
 import in.tranquilsoft.groupmessager.model.impl.ContactGroup;
 import in.tranquilsoft.groupmessager.model.impl.GroupContactJunction;
+import in.tranquilsoft.groupmessager.model.impl.MessageSentStatus;
+import in.tranquilsoft.groupmessager.model.impl.MessagingHistory;
 
 /**
  * Created by gurdevp on 05/12/15.
@@ -20,7 +22,7 @@ import in.tranquilsoft.groupmessager.model.impl.GroupContactJunction;
 public class MySqlLiteHelper extends SQLiteOpenHelper {
     private static MySqlLiteHelper mySqlLiteHelper;
     public static final String DATABASE_NAME = "GroupMessager";
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 6;
     private Context context;
 
     private MySqlLiteHelper(Context context) {
@@ -33,19 +35,30 @@ public class MySqlLiteHelper extends SQLiteOpenHelper {
         new ContactGroup().createTable(db);
         new Contact().createTable(db);
         new GroupContactJunction().createTable(db);
+        new MessagingHistory().createTable(db);
+        new MessageSentStatus().createTable(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        try {
-            new ContactGroup().dropTable(db);
-            new Contact().dropTable(db);
-            new GroupContactJunction().dropTable(db);
-        } catch (Exception e) {
+        if (oldVersion==5 && newVersion==6) {
+            db.execSQL("alter table "+MessagingHistory.TABLE_NAME+" drop column group_d");
+            db.execSQL("alter table "+MessagingHistory.TABLE_NAME+" add column group_id integer");
+        } else {
+            try {
+                new ContactGroup().dropTable(db);
+                new Contact().dropTable(db);
+                new GroupContactJunction().dropTable(db);
+                new MessagingHistory().dropTable(db);
+                new MessageSentStatus().dropTable(db);
+            } catch (Exception e) {
+            }
+            new ContactGroup().createTable(db);
+            new Contact().createTable(db);
+            new GroupContactJunction().createTable(db);
+            new MessagingHistory().createTable(db);
+            new MessageSentStatus().createTable(db);
         }
-        new ContactGroup().createTable(db);
-        new Contact().createTable(db);
-        new GroupContactJunction().createTable(db);
 //        new ContactGroup().updateTable(db, oldVersion, newVersion);
 //        new AbstractContact().updateTable(db, oldVersion, newVersion);
     }

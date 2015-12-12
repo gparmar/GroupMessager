@@ -36,12 +36,22 @@ public abstract class DefaultActivity extends AppCompatActivity {
             startActivity(dbmanager);
 
             return true;
-        } else if (id == R.id.action_compose) {
+        } else
+        if (id == R.id.action_compose) {
             editClicked();
             return true;
+        } else if (id==R.id.action_history){
+            historyClicked();
+        }else if (id==R.id.action_debug){
+            new Contact().getByContactGrpId(this, 1l);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void historyClicked() {
+        Intent intent = new Intent(this, HistoryActivity.class);
+        startActivity(intent);
     }
 
     @Override

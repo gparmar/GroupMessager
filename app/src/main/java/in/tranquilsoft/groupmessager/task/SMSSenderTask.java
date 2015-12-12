@@ -13,14 +13,18 @@ import android.util.Log;
 import java.util.List;
 
 import in.tranquilsoft.groupmessager.model.impl.Contact;
+import in.tranquilsoft.groupmessager.model.impl.MessageSentStatus;
 import in.tranquilsoft.groupmessager.model.impl.MessagingHistory;
+import in.tranquilsoft.groupmessager.util.Constants;
 
 /**
  * Created by gurdevp on 10/12/15.
  */
 public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
     public static final String CONTACT_PHONE_NUMBER = "CONTACT_PHONE_NUMBER";
+    public static final String CONTACT_ID = "CONTACT_ID";
     public static final String CONTACT_GROUP_ID = "CONTACT_GROUP_ID";
+    public static final String HISTORY_ID = "HISTORY_ID";
 
     public static final int SMS_SENT_REQUEST = 1;
     public static final int SMS_DELIVERY_REQUEST = 2;
@@ -38,6 +42,23 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
         public void onReceive(Context context, Intent intent) {
             String phone = intent.getStringExtra(CONTACT_PHONE_NUMBER);
             long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID, -1);
+            long historyId = intent.getLongExtra(HISTORY_ID, -1);
+            long contactId = intent.getLongExtra(CONTACT_ID, -1);
+
+            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdContactId(context, historyId,contactId);
+            if (mss == null) {
+                mss=new MessageSentStatus();
+                mss.setContactId(contactId);
+                mss.setSentAt(System.currentTimeMillis());
+                mss.setHistoryId(historyId);
+                mss.setSentStatus(Constants.TRUE);
+                mss.create(context);
+            } else {
+                mss.setSentAt(System.currentTimeMillis());
+                mss.setSentStatus(Constants.TRUE);
+                mss.update(context);
+            }
+
             Log.e("MySentBroadcastReceiver", "Sent message for contact grp id:" + contactGrpId +
                     ", phone:" + phone);
         }
@@ -51,6 +72,21 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
         public void onReceive(Context context, Intent intent) {
             String phone = intent.getStringExtra(CONTACT_PHONE_NUMBER);
             long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID, -1);
+            long historyId = intent.getLongExtra(HISTORY_ID, -1);
+            long contactId = intent.getLongExtra(CONTACT_ID, -1);
+            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdContactId(context, historyId, contactId);
+            if (mss == null) {
+                mss=new MessageSentStatus();
+                mss.setContactId(contactId);
+                mss.setDeliveredAt(System.currentTimeMillis());
+                mss.setHistoryId(historyId);
+                mss.setDeliveredAt(Constants.TRUE);
+                mss.create(context);
+            } else {
+                mss.setDeliveredAt(System.currentTimeMillis());
+                mss.setDeliveryStatus(Constants.TRUE);
+                mss.update(context);
+            }
             Log.e("MyDlvryBrcastReceiver", "Delivered message for contact grp id:" + contactGrpId +
                     ", phone:" + phone);
         }
@@ -82,16 +118,23 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
         int count = 0;
         int size = contacts.size();
         MessagingHistory history = new MessagingHistory();
-        history.se
+        history.setGroupId(contactGrpId);
+        history.setSentTime(System.currentTimeMillis());
+        history.setSmsMessage(sms);
+        long historyId = history.create(context);
         for (Contact contact : contacts) {
             SmsManager smsManager = SmsManager.getDefault();
             Intent sentIntent = new Intent(context, MySentBroadcastReceiver.class);
+            sentIntent.putExtra(HISTORY_ID, historyId);
             sentIntent.putExtra(CONTACT_GROUP_ID, contactGrpId);
+            sentIntent.putExtra(CONTACT_ID, contact.getId());
             sentIntent.putExtra(CONTACT_PHONE_NUMBER, contact.getPhone());
             PendingIntent sentPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_REQUEST,
                     sentIntent, PendingIntent.FLAG_ONE_SHOT);
             Intent deliveryIntent = new Intent(context, MyDeliveryBroadcastReceiver.class);
+            deliveryIntent.putExtra(HISTORY_ID, historyId);
             deliveryIntent.putExtra(CONTACT_GROUP_ID, contactGrpId);
+            deliveryIntent.putExtra(CONTACT_ID, contact.getId());
             deliveryIntent.putExtra(CONTACT_PHONE_NUMBER, contact.getPhone());
             PendingIntent deliveryPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_REQUEST,
                     deliveryIntent, PendingIntent.FLAG_ONE_SHOT);

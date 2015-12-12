@@ -102,6 +102,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             public void onClick(View v) {
                 new SMSSenderTask(selectedGroupId, sms.getText().toString(), AddEditGroupActivity.this)
                         .execute();
+                sms.setText("");
             }
         });
 
@@ -139,10 +140,10 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
     public void saveClicked() {
         if (addMode) {
             ContactGroup grp = new ContactGroup();
-            grp.setGroupName(groupName.getText().toString());
+            grp.setGroupName(groupName.getText().toString().trim());
             new InsertSqliteTask(this, this, grp, INSERT_GROUP_REQUEST).execute();
         } else {
-            selectedGroup.setGroupName(groupName.getText().toString());
+            selectedGroup.setGroupName(groupName.getText().toString().trim());
             new UpdateSqliteTask(this, this, selectedGroup, UPDATE_GROUP_REQUEST).execute();
         }
     }
@@ -236,10 +237,11 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                             + contact.getId() + ", IC:" + initCompleted[0]);
                     if (initCompleted[0]) {
                         if (isChecked) {
-                            if (Utility.isEmpty(groupName.getText().toString())) {
+                            if (Utility.isEmpty(groupName.getText().toString().trim())) {
                                 buttonView.setChecked(false);
                                 new AlertDialog.Builder(AddEditGroupActivity.this).
-                                        setMessage("First ,please enter the name of the group.")
+                                        setMessage("First, please enter the name of the group.")
+                                        .setPositiveButton("OK", null)
                                         .show();
                             } else {
                                 if (selectedGroupId != -1) {
@@ -258,7 +260,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
 
                                 } else {
                                     ContactGroup grp = new ContactGroup();
-                                    grp.setGroupName(groupName.getText().toString());
+                                    grp.setGroupName(groupName.getText().toString().trim());
                                     addModeBeingConvertedToEditMode = true;
                                     selectedContactId = contact.getId();
                                     new InsertSqliteTask(AddEditGroupActivity.this, AddEditGroupActivity.this,

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gurdev Parmar"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9900440292"
+            android:layout_marginTop="5dp"
+            />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/sentIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_delete"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        />
+    <TextView
+        android:id="@+id/sentOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="24-10-2015 12:00:24"
+        android:layout_marginTop="5dp"
+        />
+    <ImageView
+        android:id="@+id/deliveredIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_delete"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        />
+    <TextView
+        android:id="@+id/deliveredOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="24-10-2015 12:00:24"
+        android:layout_marginTop="5dp"
+        />
+
+</TableRow>

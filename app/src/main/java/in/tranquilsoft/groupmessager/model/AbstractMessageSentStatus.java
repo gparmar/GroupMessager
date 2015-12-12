@@ -31,10 +31,10 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
     private long id;
     private long historyId;
     private long contactId;
-    private boolean sentStatus;
-    private long sentAt;
-    private boolean deliveryStatus;
-    private long deliveredAt;
+    private int sentStatus;
+    private long sentAt=-1l;
+    private int deliveryStatus;
+    private long deliveredAt=-1l;
 
 
     public AbstractMessageSentStatus() {
@@ -64,11 +64,11 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
         this.contactId = contactId;
     }
 
-    public boolean getSentStatus() {
+    public int getSentStatus() {
         return sentStatus;
     }
 
-    public void setSentStatus(boolean sentStatus) {
+    public void setSentStatus(int sentStatus) {
         this.sentStatus = sentStatus;
     }
 
@@ -80,11 +80,11 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
         this.sentAt = sentAt;
     }
 
-    public boolean getDeliveryStatus() {
+    public int getDeliveryStatus() {
         return deliveryStatus;
     }
 
-    public void setDeliveryStatus(boolean deliveryStatus) {
+    public void setDeliveryStatus(int deliveryStatus) {
         this.deliveryStatus = deliveryStatus;
     }
 
@@ -165,9 +165,9 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
             messageSentStatus.setId(cursor.getLong(0));
             messageSentStatus.setHistoryId(cursor.getLong(1));
             messageSentStatus.setContactId(cursor.getLong(2));
-            messageSentStatus.setSentStatus(cursor.getInt(3) == Constants.TRUE ? true : false);
+            messageSentStatus.setSentStatus(cursor.getInt(3));
             messageSentStatus.setSentAt(cursor.getLong(4));
-            messageSentStatus.setDeliveryStatus(cursor.getInt(5) == Constants.TRUE ? true : false);
+            messageSentStatus.setDeliveryStatus(cursor.getInt(5));
             messageSentStatus.setDeliveredAt(cursor.getLong(6));
 
             return messageSentStatus;
@@ -188,9 +188,9 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
                 messageSentStatus.setId(cursor.getLong(0));
                 messageSentStatus.setHistoryId(cursor.getLong(1));
                 messageSentStatus.setContactId(cursor.getLong(2));
-                messageSentStatus.setSentStatus(cursor.getInt(3) == Constants.TRUE ? true : false);
+                messageSentStatus.setSentStatus(cursor.getInt(3));
                 messageSentStatus.setSentAt(cursor.getLong(4));
-                messageSentStatus.setDeliveryStatus(cursor.getInt(5) == Constants.TRUE ? true : false);
+                messageSentStatus.setDeliveryStatus(cursor.getInt(5));
                 messageSentStatus.setDeliveredAt(cursor.getLong(6));
 
                 result.add(messageSentStatus);
@@ -219,9 +219,9 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
         id = in.readLong();
         historyId = in.readLong();
         contactId = in.readLong();
-        sentStatus = in.readInt() == 0 ? false : true;
+        sentStatus = in.readInt();
         sentAt = in.readLong();
-        deliveryStatus = in.readInt() == 0 ? false : true;
+        deliveryStatus = in.readInt();
         deliveredAt = in.readLong();
 
     }
@@ -231,9 +231,9 @@ public class AbstractMessageSentStatus extends DefaultEntity implements Parcelab
         out.writeLong(id);
         out.writeLong(historyId);
         out.writeLong(contactId);
-        out.writeInt(sentStatus ? 1 : 0);
+        out.writeInt(sentStatus);
         out.writeLong(sentAt);
-        out.writeInt(deliveryStatus ? 1 : 0);
+        out.writeInt(deliveryStatus);
         out.writeLong(deliveredAt);
 
     }

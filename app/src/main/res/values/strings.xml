@@ -6,4 +6,6 @@
     <string name="action_refresh">Refresh Contacts</string>
     <string name="action_dumpdb">Dump DB</string>
     <string name="action_compose">Compose Message</string>
+    <string name="action_history">History</string>
+    <string name="action_debug">Debug</string>
 </resources>

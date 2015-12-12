@@ -46,7 +46,7 @@ public class Contact extends AbstractContact {
     public List<Contact> getByContactGrpId(Context context, Long contactGroupId) {
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("select * from " + Contact.TABLE_NAME + " c, " + GroupContactJunction.TABLE_NAME +
+        Cursor cursor = db.rawQuery("select c.* from " + Contact.TABLE_NAME + " c, " + GroupContactJunction.TABLE_NAME +
                 " gcj where c." + Contact.ID_FIELD + "=gcj." + GroupContactJunction.ContactId_FIELD + " and "
                 + " gcj." + GroupContactJunction.ContactGroupId_FIELD + "=?", new String[]{contactGroupId.toString()});
 
@@ -54,10 +54,16 @@ public class Contact extends AbstractContact {
             List<Contact> result = new ArrayList<>();
             do {
                 Contact contact = new Contact();
-                contact.setId(cursor.getLong(cursor.getColumnIndex(Contact.ID_FIELD)));
-                contact.setName(cursor.getString(cursor.getColumnIndex(Contact.Name_FIELD)));
-                contact.setPhone(cursor.getString(cursor.getColumnIndex(Contact.Phone_FIELD)));
-                contact.setGroupId(cursor.getLong(cursor.getColumnIndex(Contact.GroupId_FIELD)));
+                int idIdx = cursor.getColumnIndex(Contact.ID_FIELD);
+                long id = cursor.getLong(idIdx);
+                contact.setId(id);
+
+                int nameIdx = cursor.getColumnIndex(Contact.Name_FIELD);
+                contact.setName(cursor.getString(nameIdx));
+                int phoneIdx = cursor.getColumnIndex(Contact.Phone_FIELD);
+                contact.setPhone(cursor.getString(phoneIdx));
+                int grpIdIdx = cursor.getColumnIndex(Contact.GroupId_FIELD);
+                contact.setGroupId(cursor.getLong(grpIdIdx));
 
                 result.add(contact);
             } while (cursor.moveToNext());

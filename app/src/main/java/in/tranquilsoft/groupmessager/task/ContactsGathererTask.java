@@ -1,5 +1,6 @@
 package in.tranquilsoft.groupmessager.task;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -55,6 +56,14 @@ public class ContactsGathererTask extends AsyncTask<Void, Integer, Void> {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(Constants.PROPERTY_CONTACTS_COLLECTED, true);
         editor.commit();
+
+        new AlertDialog.Builder(context).setTitle("Welcome!")
+                .setMessage("Thanks for using GroupMessager.\n\n" +
+                        "To get started you need to create contact groups.\n\n" +
+                        "For that please click on the + button on the bottom.\n\n" +
+                        "Happy Group Messaging!!!")
+                .setPositiveButton("OK",null)
+                .show();
     }
 
     //

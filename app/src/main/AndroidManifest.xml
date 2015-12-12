@@ -24,6 +24,8 @@
             android:screenOrientation="portrait"></activity>
         <activity android:name="in.tranquilsoft.groupmessager.util.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light"/>
+        <activity android:name=".HistoryActivity" android:screenOrientation="landscape"
+            android:parentActivityName=".MainActivity"></activity>
         <receiver android:name=".task.SMSSenderTask$MyDeliveryBroadcastReceiver"></receiver>
         <receiver android:name=".task.SMSSenderTask$MySentBroadcastReceiver"></receiver>
     </application>

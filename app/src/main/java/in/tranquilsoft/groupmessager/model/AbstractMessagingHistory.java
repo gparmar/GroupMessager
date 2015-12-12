@@ -17,15 +17,19 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
     public static final String TAG = "MessagingHistory";
     public static final String TABLE_NAME = "MessagingHistory";
     public static final String ID_FIELD = "id";
-    public static final String GroupD_FIELD = "group_d";
+    public static final String GroupId_FIELD = "group_id";
     public static final String SentTime_FIELD = "sent_time";
+    public static final String SmsMessage_FIELD = "sms_message";
 
-    public static final String[] OTHER_FIELDS = new String[]{GroupD_FIELD, SentTime_FIELD};
-    public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(id integer primary key autoincrement,group_d integer,sent_time integer)";
+    public static final String[] OTHER_FIELDS = new String[]{GroupId_FIELD, SentTime_FIELD, SmsMessage_FIELD};
+    public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME +
+            "(id integer primary key autoincrement," +
+            "group_id integer,sent_time integer,sms_message text)";
 
     private long id;
-    private long groupD;
-    private Date sentTime;
+    private long groupId;
+    private long sentTime;
+    private String smsMessage;
 
 
     public AbstractMessagingHistory() {
@@ -39,20 +43,28 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
         this.id = id;
     }
 
-    public long getGroupD() {
-        return groupD;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setGroupD(long groupD) {
-        this.groupD = groupD;
+    public void setGroupId(long groupD) {
+        this.groupId = groupD;
     }
 
-    public Date getSentTime() {
+    public long getSentTime() {
         return sentTime;
     }
 
-    public void setSentTime(Date sentTime) {
+    public void setSentTime(long sentTime) {
         this.sentTime = sentTime;
+    }
+
+    public String getSmsMessage() {
+        return smsMessage;
+    }
+
+    public void setSmsMessage(String smsMessage) {
+        this.smsMessage = smsMessage;
     }
 
 
@@ -73,8 +85,9 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
     @Override
     public long create(Context context) {
         ContentValues cv = new ContentValues();
-        cv.put(GroupD_FIELD, getGroupD());
+        cv.put(GroupId_FIELD, getGroupId());
         cv.put(SentTime_FIELD, getSentTime());
+        cv.put(SmsMessage_FIELD, getSmsMessage());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
         long result = db.insert(TABLE_NAME, null, cv);
@@ -86,8 +99,9 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
     public void update(Context context) {
         Log.i(TAG, "Updating " + this);
         ContentValues cv = new ContentValues();
-        cv.put(GroupD_FIELD, getGroupD());
+        cv.put(GroupId_FIELD, getGroupId());
         cv.put(SentTime_FIELD, getSentTime());
+        cv.put(SmsMessage_FIELD, getSmsMessage());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
         db.update(TABLE_NAME, cv, ID_FIELD + "= ?", new String[]{String.valueOf(getId())});
@@ -114,8 +128,9 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
             Log.d(TAG, "Cursor was not null and move to first");
             MessagingHistory messagingHistory = new MessagingHistory();
             messagingHistory.setId(cursor.getLong(0));
-            messagingHistory.setGroupD(cursor.getLong(1));
+            messagingHistory.setGroupId(cursor.getLong(1));
             messagingHistory.setSentTime(cursor.getLong(2));
+            messagingHistory.setSmsMessage(cursor.getString(3));
 
             return messagingHistory;
         }
@@ -133,8 +148,9 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
             do {
                 MessagingHistory messagingHistory = new MessagingHistory();
                 messagingHistory.setId(cursor.getLong(0));
-                messagingHistory.setGroupD(cursor.getLong(1));
+                messagingHistory.setGroupId(cursor.getLong(1));
                 messagingHistory.setSentTime(cursor.getLong(2));
+                messagingHistory.setSmsMessage(cursor.getString(3));
 
                 result.add(messagingHistory);
             } while (cursor.moveToNext());
@@ -160,14 +176,18 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
 
     protected AbstractMessagingHistory(Parcel in) {
         id = in.readLong();
-        groupD = in.readLong();
+        groupId = in.readLong();
+        sentTime = in.readLong();
+        smsMessage = in.readString();
 
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
-        out.writeLong(groupD);
+        out.writeLong(groupId);
+        out.writeLong(sentTime);
+        out.writeString(smsMessage);
 
     }
 
@@ -183,6 +203,6 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
     };
 
     public String toString() {
-        return "MessagingHistory:[" + "id=" + id + ", " + "groupD=" + groupD + ", " + "sentTime=" + sentTime + "]";
+        return "MessagingHistory:[" + "id=" + id + ", " + "groupD=" + groupId + ", " + "sentTime=" + sentTime + ", " + "smsMessage=" + smsMessage + "]";
     }
 }
