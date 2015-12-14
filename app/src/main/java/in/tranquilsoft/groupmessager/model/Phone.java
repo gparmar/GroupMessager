@@ -2,6 +2,7 @@ package in.tranquilsoft.groupmessager.model;
 
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import in.tranquilsoft.groupmessager.util.Utility;
 
@@ -9,6 +10,7 @@ import in.tranquilsoft.groupmessager.util.Utility;
  * Created by gurdevp on 06/12/15.
  */
 public class Phone {
+    String TAG="Phone";
     public static final String HOME = "Home";
     public static final String WORK = "Work";
     public static final String MOBILE = "Mobile";
@@ -34,6 +36,7 @@ public class Phone {
 
     public Phone(Cursor phoneCursor) {
         phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        Log.e(TAG,"phoneNumber:"+phoneNumber);
         phoneNumber = Utility.getNormalizedIndianPhoneNumber(phoneNumber);
 
         if (phoneNumber == null) {

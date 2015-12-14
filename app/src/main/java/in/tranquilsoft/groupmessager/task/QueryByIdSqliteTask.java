@@ -10,16 +10,16 @@ import in.tranquilsoft.groupmessager.model.DefaultEntity;
 /**
  * Created by gurdevp on 05/12/15.
  */
-public class QueryByIdSqliteTask extends AsyncTask<Void, Void, DefaultEntity> {
+public class QueryByIdSqliteTask<ID> extends AsyncTask<Void, Void, DefaultEntity> {
     String TAG = "QueryByIdSqliteTask";
     Context context;
-    DefaultEntity entity;
-    long id;
+    DefaultEntity<ID> entity;
+    ID id;
     SingleResultSqliteConsumer sqliteConsumer;
     int requestType;
 
     public QueryByIdSqliteTask(Context context, SingleResultSqliteConsumer sqliteConsumer,
-                               DefaultEntity entity, long id,
+                               DefaultEntity entity, ID id,
                                int requestType) {
         this.entity = entity;
         this.id = id;
@@ -27,6 +27,7 @@ public class QueryByIdSqliteTask extends AsyncTask<Void, Void, DefaultEntity> {
         this.sqliteConsumer = sqliteConsumer;
         this.requestType = requestType;
     }
+
 
     @Override
     protected DefaultEntity doInBackground(Void... params) {

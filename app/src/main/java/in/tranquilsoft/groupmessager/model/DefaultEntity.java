@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by gurdevp on 05/12/15.
  */
-public abstract class DefaultEntity {
+public abstract class DefaultEntity<ID> {
     public abstract void createTable(SQLiteDatabase db);
 
     public abstract void dropTable(SQLiteDatabase db);
@@ -21,7 +21,7 @@ public abstract class DefaultEntity {
 
     public abstract void delete(Context context);
 
-    public abstract <T> T getById(Context context, long id);
+    public abstract <T> T getById(Context context, ID id);
 
     public abstract <T> List<T> getAll(Context context);
 

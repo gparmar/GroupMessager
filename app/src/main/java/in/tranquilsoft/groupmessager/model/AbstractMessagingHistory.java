@@ -13,7 +13,7 @@ import java.util.List;
 
 import in.tranquilsoft.groupmessager.model.impl.MessagingHistory;
 
-public class AbstractMessagingHistory extends DefaultEntity implements Parcelable {
+public class AbstractMessagingHistory extends DefaultEntity<Long> implements Parcelable {
     public static final String TAG = "MessagingHistory";
     public static final String TABLE_NAME = "MessagingHistory";
     public static final String ID_FIELD = "id";
@@ -117,7 +117,7 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
     }
 
     @Override
-    public MessagingHistory getById(Context context, long id) {
+    public MessagingHistory getById(Context context, Long id) {
         Log.i(TAG, "Doing query by id:" + id);
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
@@ -161,7 +161,7 @@ public class AbstractMessagingHistory extends DefaultEntity implements Parcelabl
 
     @Override
     public String getIdField() {
-        return "id";
+        return ID_FIELD;
     }
 
     @Override

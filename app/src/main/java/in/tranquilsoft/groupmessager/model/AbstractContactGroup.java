@@ -13,7 +13,7 @@ import java.util.List;
 
 import in.tranquilsoft.groupmessager.model.impl.ContactGroup;
 
-public class AbstractContactGroup extends DefaultEntity implements Parcelable {
+public class AbstractContactGroup extends DefaultEntity<Long> implements Parcelable {
     public static final String TAG = "ContactGroup";
     public static final String TABLE_NAME = "ContactGroup";
     public static final String ID_FIELD = "group_id";
@@ -91,7 +91,7 @@ public class AbstractContactGroup extends DefaultEntity implements Parcelable {
     }
 
     @Override
-    public ContactGroup getById(Context context, long id) {
+    public ContactGroup getById(Context context, Long id) {
         Log.i(TAG, "Doing query by id:" + id);
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
@@ -131,7 +131,7 @@ public class AbstractContactGroup extends DefaultEntity implements Parcelable {
 
     @Override
     public String getIdField() {
-        return "group_id";
+        return ID_FIELD;
     }
 
     @Override

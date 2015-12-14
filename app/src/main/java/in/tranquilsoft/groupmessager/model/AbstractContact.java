@@ -13,32 +13,24 @@ import java.util.List;
 
 import in.tranquilsoft.groupmessager.model.impl.Contact;
 
-public class AbstractContact extends DefaultEntity implements Parcelable {
+public class AbstractContact extends DefaultEntity<String> implements Parcelable {
     public static final String TAG = "Contact";
     public static final String TABLE_NAME = "Contact";
-    public static final String ID_FIELD = "id";
+    public static final String ID_FIELD = "phone";
     public static final String Name_FIELD = "name";
-    public static final String Phone_FIELD = "phone";
+    //public static final String Phone_FIELD = "phone";
     public static final String GroupId_FIELD = "group_id";
 
-    public static final String[] OTHER_FIELDS = new String[]{Name_FIELD, Phone_FIELD, GroupId_FIELD};
-    public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(id integer primary key autoincrement,name text,phone text,group_id integer)";
+    public static final String[] OTHER_FIELDS = new String[]{Name_FIELD, GroupId_FIELD};
+    public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(phone text primary key ,name text,group_id integer)";
 
-    private long id;
+    //private long id;
     private String name;
     private String phone;
     private long groupId;
 
 
     public AbstractContact() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -84,7 +76,7 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
     public long create(Context context) {
         ContentValues cv = new ContentValues();
         cv.put(Name_FIELD, getName());
-        cv.put(Phone_FIELD, getPhone());
+        cv.put(ID_FIELD, getPhone());
         cv.put(GroupId_FIELD, getGroupId());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
@@ -98,11 +90,11 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
         Log.i(TAG, "Updating " + this);
         ContentValues cv = new ContentValues();
         cv.put(Name_FIELD, getName());
-        cv.put(Phone_FIELD, getPhone());
+        cv.put(ID_FIELD, getPhone());
         cv.put(GroupId_FIELD, getGroupId());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
-        db.update(TABLE_NAME, cv, ID_FIELD + "= ?", new String[]{String.valueOf(getId())});
+        db.update(TABLE_NAME, cv, ID_FIELD + "= ?", new String[]{getPhone()});
         db.close();
 
     }
@@ -110,25 +102,24 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
     @Override
     public void delete(Context context) {
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
-        db.delete(TABLE_NAME, ID_FIELD + "= ?", new String[]{String.valueOf(getId())});
+        db.delete(TABLE_NAME, ID_FIELD + "= ?", new String[]{getPhone()});
         db.close();
     }
 
     @Override
-    public Contact getById(Context context, long id) {
-        Log.i(TAG, "Doing query by id:" + id);
+    public Contact getById(Context context, String phone) {
+        Log.i(TAG, "Doing query by phone:" + phone);
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),
-                ID_FIELD + "= ?", new String[]{String.valueOf(id)},
+                ID_FIELD + "= ?", new String[]{phone},
                 null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             Log.d(TAG, "Cursor was not null and move to first");
             Contact contact = new Contact();
-            contact.setId(cursor.getLong(0));
+            contact.setPhone(cursor.getString(0));
             contact.setName(cursor.getString(1));
-            contact.setPhone(cursor.getString(2));
-            contact.setGroupId(cursor.getLong(3));
+            contact.setGroupId(cursor.getLong(2));
 
             return contact;
         }
@@ -145,10 +136,9 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
             List<Contact> result = new ArrayList<>();
             do {
                 Contact contact = new Contact();
-                contact.setId(cursor.getLong(0));
+                contact.setPhone(cursor.getString(0));
                 contact.setName(cursor.getString(1));
-                contact.setPhone(cursor.getString(2));
-                contact.setGroupId(cursor.getLong(3));
+                contact.setGroupId(cursor.getLong(2));
 
                 result.add(contact);
             } while (cursor.moveToNext());
@@ -159,7 +149,7 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
 
     @Override
     public String getIdField() {
-        return "id";
+        return ID_FIELD;
     }
 
     @Override
@@ -173,7 +163,7 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
     }
 
     protected AbstractContact(Parcel in) {
-        id = in.readLong();
+        //id = in.readLong();
         name = in.readString();
         phone = in.readString();
         groupId = in.readLong();
@@ -182,7 +172,7 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(id);
+        //out.writeLong(id);
         out.writeString(name);
         out.writeString(phone);
         out.writeLong(groupId);
@@ -201,6 +191,6 @@ public class AbstractContact extends DefaultEntity implements Parcelable {
     };
 
     public String toString() {
-        return "Contact:[" + "id=" + id + ", " + "name=" + name + ", " + "phone=" + phone + ", " + "groupId=" + groupId + "]";
+        return "Contact:[" + "name=" + name + ", " + "phone=" + phone + ", " + "groupId=" + groupId + "]";
     }
 }

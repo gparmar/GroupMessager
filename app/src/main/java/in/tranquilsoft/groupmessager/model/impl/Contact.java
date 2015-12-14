@@ -14,6 +14,15 @@ import in.tranquilsoft.groupmessager.model.MySqlLiteHelper;
 public class Contact extends AbstractContact {
     static String TAG = "Contact";
     boolean dirty = false;
+    boolean newContact = false;
+
+    public boolean isNewContact() {
+        return newContact;
+    }
+
+    public void setNewContact(boolean newContact) {
+        this.newContact = newContact;
+    }
 
     public boolean isDirty() {
         return dirty;
@@ -33,13 +42,14 @@ public class Contact extends AbstractContact {
         if (cursor != null && cursor.moveToFirst()) {
             Log.d(TAG, "Cursor was not null and move to first");
             Contact contact = new Contact();
-            contact.setId(cursor.getLong(0));
+            contact.setPhone(cursor.getString(0));
             contact.setName(cursor.getString(1));
-            contact.setPhone(cursor.getString(2));
-            contact.setGroupId(cursor.getLong(3));
+            contact.setGroupId(cursor.getLong(2));
 
+            //Log.e(TAG, "Returning "+contact);
             return contact;
         }
+        //Log.e(TAG, "Returning null");
         return null;
     }
 
@@ -55,13 +65,13 @@ public class Contact extends AbstractContact {
             do {
                 Contact contact = new Contact();
                 int idIdx = cursor.getColumnIndex(Contact.ID_FIELD);
-                long id = cursor.getLong(idIdx);
-                contact.setId(id);
+                String phone= cursor.getString(idIdx);
+                contact.setPhone(phone);
 
                 int nameIdx = cursor.getColumnIndex(Contact.Name_FIELD);
                 contact.setName(cursor.getString(nameIdx));
-                int phoneIdx = cursor.getColumnIndex(Contact.Phone_FIELD);
-                contact.setPhone(cursor.getString(phoneIdx));
+//                int phoneIdx = cursor.getColumnIndex(Contact.Phone_FIELD);
+//                contact.setPhone(cursor.getString(phoneIdx));
                 int grpIdIdx = cursor.getColumnIndex(Contact.GroupId_FIELD);
                 contact.setGroupId(cursor.getLong(grpIdIdx));
 

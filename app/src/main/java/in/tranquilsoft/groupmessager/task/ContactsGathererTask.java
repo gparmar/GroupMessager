@@ -129,9 +129,9 @@ public class ContactsGathererTask extends AsyncTask<Void, Integer, Void> {
 
                 // save the contacts
                 for (Contact contact : contactList) {
-                    if (contact.getId() < 1) {
+                    if (contact.isNewContact()) {
                         contact.create(context);
-                    } else if (contact.isDirty()) {
+                    } else if (contact.isDirty()){
                         contact.update(context);
                     }
                 }
@@ -189,6 +189,7 @@ public class ContactsGathererTask extends AsyncTask<Void, Integer, Void> {
 
                     //Create a new contact
                     Contact contact = new Contact();
+                    contact.setNewContact(true);
                     contact.setName(name);
                     contact.setPhone(phone.getPhoneNumber());
 //                    contact.setProfilePicture(profilePicUri);
@@ -280,7 +281,6 @@ public class ContactsGathererTask extends AsyncTask<Void, Integer, Void> {
 //                    }
 //                    emailCursor.close();
                 }
-
                 if (contactFromDb.isDirty()) {
                     //contactFromDb.setDateModified(System.currentTimeMillis());
                     return contactFromDb;

@@ -22,7 +22,8 @@ import in.tranquilsoft.groupmessager.util.Constants;
  */
 public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
     public static final String CONTACT_PHONE_NUMBER = "CONTACT_PHONE_NUMBER";
-    public static final String CONTACT_ID = "CONTACT_ID";
+    public static final String CONTACT_NAME = "CONTACT_NAME";
+    public static final String PHONE = "PHONE";
     public static final String CONTACT_GROUP_ID = "CONTACT_GROUP_ID";
     public static final String HISTORY_ID = "HISTORY_ID";
 
@@ -43,15 +44,16 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
             String phone = intent.getStringExtra(CONTACT_PHONE_NUMBER);
             long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID, -1);
             long historyId = intent.getLongExtra(HISTORY_ID, -1);
-            long contactId = intent.getLongExtra(CONTACT_ID, -1);
+            String contactName = intent.getStringExtra(CONTACT_NAME);
 
-            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdContactId(context, historyId,contactId);
+            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdAndPhone(context, historyId, phone);
             if (mss == null) {
                 mss=new MessageSentStatus();
-                mss.setContactId(contactId);
+                mss.setPhone(phone);
                 mss.setSentAt(System.currentTimeMillis());
                 mss.setHistoryId(historyId);
                 mss.setSentStatus(Constants.TRUE);
+                mss.setContactName(contactName);
                 mss.create(context);
             } else {
                 mss.setSentAt(System.currentTimeMillis());
@@ -73,14 +75,16 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
             String phone = intent.getStringExtra(CONTACT_PHONE_NUMBER);
             long contactGrpId = intent.getLongExtra(CONTACT_GROUP_ID, -1);
             long historyId = intent.getLongExtra(HISTORY_ID, -1);
-            long contactId = intent.getLongExtra(CONTACT_ID, -1);
-            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdContactId(context, historyId, contactId);
+            String contactName = intent.getStringExtra(CONTACT_NAME);
+
+            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdAndPhone(context, historyId, phone);
             if (mss == null) {
                 mss=new MessageSentStatus();
-                mss.setContactId(contactId);
+                mss.setPhone(phone);
                 mss.setDeliveredAt(System.currentTimeMillis());
                 mss.setHistoryId(historyId);
                 mss.setDeliveredAt(Constants.TRUE);
+                mss.setContactName(contactName);
                 mss.create(context);
             } else {
                 mss.setDeliveredAt(System.currentTimeMillis());
@@ -127,14 +131,14 @@ public class SMSSenderTask extends AsyncTask<Void, Integer, Void> {
             Intent sentIntent = new Intent(context, MySentBroadcastReceiver.class);
             sentIntent.putExtra(HISTORY_ID, historyId);
             sentIntent.putExtra(CONTACT_GROUP_ID, contactGrpId);
-            sentIntent.putExtra(CONTACT_ID, contact.getId());
+            sentIntent.putExtra(CONTACT_NAME, contact.getName());
             sentIntent.putExtra(CONTACT_PHONE_NUMBER, contact.getPhone());
             PendingIntent sentPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_REQUEST,
                     sentIntent, PendingIntent.FLAG_ONE_SHOT);
             Intent deliveryIntent = new Intent(context, MyDeliveryBroadcastReceiver.class);
             deliveryIntent.putExtra(HISTORY_ID, historyId);
             deliveryIntent.putExtra(CONTACT_GROUP_ID, contactGrpId);
-            deliveryIntent.putExtra(CONTACT_ID, contact.getId());
+            //deliveryIntent.putExtra(CONTACT_ID, contact.getId());
             deliveryIntent.putExtra(CONTACT_PHONE_NUMBER, contact.getPhone());
             PendingIntent deliveryPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_REQUEST,
                     deliveryIntent, PendingIntent.FLAG_ONE_SHOT);

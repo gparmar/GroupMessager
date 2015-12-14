@@ -44,6 +44,20 @@
                 android:text="Close"/>
         </LinearLayout>
     </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <AutoCompleteTextView
+            android:id="@+id/searchBx"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search for contact"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_search"
+            android:layout_gravity="right"/>
+    </FrameLayout>
     <ListView
         android:id="@+id/contacts"
         android:layout_width="match_parent"

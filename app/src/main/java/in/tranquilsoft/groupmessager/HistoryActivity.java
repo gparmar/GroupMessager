@@ -187,8 +187,8 @@ public class HistoryActivity extends DefaultActivity implements MultiResultSqlit
                 } else {
                     deliveredIcon.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_delete));
                 }
-                name.setText(mss.getContact().getName());
-                phone.setText(mss.getContact().getPhone());
+                name.setText(mss.getContactName());
+                phone.setText(mss.getPhone());
                 if (mss.getSentAt() != -1) {
                     sentOn.setText(longDate.format(new Date(mss.getSentAt())));
                 } else {

@@ -24,7 +24,7 @@ public class GroupContactJunction extends AbstractGroupContactJunction {
             do {
                 GroupContactJunction groupContactJunction = new GroupContactJunction();
                 groupContactJunction.setId(cursor.getLong(0));
-                groupContactJunction.setContactId(cursor.getLong(1));
+                groupContactJunction.setPhone(cursor.getString(1));
                 groupContactJunction.setContactGroupId(cursor.getLong(2));
 
                 result.add(groupContactJunction);
@@ -34,9 +34,9 @@ public class GroupContactJunction extends AbstractGroupContactJunction {
         return null;
     }
 
-    public void deleteByContactGroupIdContactId(Context context, long contactGrpId, long contactId) {
+    public void deleteByContactGroupIdAndPhone(Context context, long contactGrpId, String phone) {
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
         db.execSQL("delete from " + TABLE_NAME + " where " + ContactGroupId_FIELD + "=? and "
-                + ContactId_FIELD + "=?", new Object[]{contactGrpId, contactId});
+                + ContactId_FIELD + "=?", new Object[]{contactGrpId, phone});
     }
 }

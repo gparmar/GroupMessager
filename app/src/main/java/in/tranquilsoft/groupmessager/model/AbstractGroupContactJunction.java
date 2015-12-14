@@ -13,18 +13,18 @@ import java.util.List;
 
 import in.tranquilsoft.groupmessager.model.impl.GroupContactJunction;
 
-public class AbstractGroupContactJunction extends DefaultEntity implements Parcelable {
+public class AbstractGroupContactJunction extends DefaultEntity<Long> implements Parcelable {
     public static final String TAG = "GroupContactJunction";
     public static final String TABLE_NAME = "GroupContactJunction";
     public static final String ID_FIELD = "id";
-    public static final String ContactId_FIELD = "contact_id";
+    public static final String ContactId_FIELD = "phone";
     public static final String ContactGroupId_FIELD = "contact_group_id";
 
     public static final String[] OTHER_FIELDS = new String[]{ContactId_FIELD, ContactGroupId_FIELD};
-    public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(id integer primary key autoincrement,contact_id integer,contact_group_id integer)";
+    public static final String TABLE_CREATE_SQL = "create table " + TABLE_NAME + "(id integer primary key autoincrement,phone text,contact_group_id integer)";
 
     private long id;
-    private long contactId;
+    private String phone;
     private long contactGroupId;
 
 
@@ -39,12 +39,12 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
         this.id = id;
     }
 
-    public long getContactId() {
-        return contactId;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setContactId(long contactId) {
-        this.contactId = contactId;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public long getContactGroupId() {
@@ -73,7 +73,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
     @Override
     public long create(Context context) {
         ContentValues cv = new ContentValues();
-        cv.put(ContactId_FIELD, getContactId());
+        cv.put(ContactId_FIELD, getPhone());
         cv.put(ContactGroupId_FIELD, getContactGroupId());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
@@ -86,7 +86,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
     public void update(Context context) {
         Log.i(TAG, "Updating " + this);
         ContentValues cv = new ContentValues();
-        cv.put(ContactId_FIELD, getContactId());
+        cv.put(ContactId_FIELD, getPhone());
         cv.put(ContactGroupId_FIELD, getContactGroupId());
 
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();
@@ -103,7 +103,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
     }
 
     @Override
-    public GroupContactJunction getById(Context context, long id) {
+    public GroupContactJunction getById(Context context, Long id) {
         Log.i(TAG, "Doing query by id:" + id);
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
@@ -114,7 +114,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
             Log.d(TAG, "Cursor was not null and move to first");
             GroupContactJunction groupContactJunction = new GroupContactJunction();
             groupContactJunction.setId(cursor.getLong(0));
-            groupContactJunction.setContactId(cursor.getLong(1));
+            groupContactJunction.setPhone(cursor.getString(1));
             groupContactJunction.setContactGroupId(cursor.getLong(2));
 
             return groupContactJunction;
@@ -133,7 +133,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
             do {
                 GroupContactJunction groupContactJunction = new GroupContactJunction();
                 groupContactJunction.setId(cursor.getLong(0));
-                groupContactJunction.setContactId(cursor.getLong(1));
+                groupContactJunction.setPhone(cursor.getString(1));
                 groupContactJunction.setContactGroupId(cursor.getLong(2));
 
                 result.add(groupContactJunction);
@@ -145,7 +145,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
 
     @Override
     public String getIdField() {
-        return "id";
+        return ID_FIELD;
     }
 
     @Override
@@ -160,7 +160,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
 
     protected AbstractGroupContactJunction(Parcel in) {
         id = in.readLong();
-        contactId = in.readLong();
+        phone = in.readString();
         contactGroupId = in.readLong();
 
     }
@@ -168,7 +168,7 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
-        out.writeLong(contactId);
+        out.writeString(phone);
         out.writeLong(contactGroupId);
 
     }
@@ -185,6 +185,6 @@ public class AbstractGroupContactJunction extends DefaultEntity implements Parce
     };
 
     public String toString() {
-        return "GroupContactJunction:[" + "id=" + id + ", " + "contactId=" + contactId + ", " + "contactGroupId=" + contactGroupId + "]";
+        return "GroupContactJunction:[" + "id=" + id + ", " + "phone=" + phone + ", " + "contactGroupId=" + contactGroupId + "]";
     }
 }

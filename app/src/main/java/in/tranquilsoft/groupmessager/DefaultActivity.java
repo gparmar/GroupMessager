@@ -21,9 +21,10 @@ public abstract class DefaultActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_save) {
+//        if (id == R.id.action_settings) {
+//            return true;
+//        } else
+        if (id == R.id.action_save) {
             saveClicked();
             return true;
         } else if (id == R.id.action_refresh) {
@@ -42,9 +43,10 @@ public abstract class DefaultActivity extends AppCompatActivity {
             return true;
         } else if (id==R.id.action_history){
             historyClicked();
-        }else if (id==R.id.action_debug){
-            new Contact().getByContactGrpId(this, 1l);
         }
+//        else if (id==R.id.action_debug){
+//            new Contact().getByContactGrpId(this, 1l);
+//        }
 
         return super.onOptionsItemSelected(item);
     }

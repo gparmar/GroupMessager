@@ -63,9 +63,9 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
     Map<Long, CheckBox> contactIdVsCheckbox = new HashMap<>();
 
     boolean addModeBeingConvertedToEditMode = false;
-    long selectedContactId = -1;
+    String selectedPhone = null;
     ProgressDialog dialog;
-    List<Long> selectedContactIds = new ArrayList<>();
+    List<String> selectedPhones = new ArrayList<>();
     LinearLayout sendMsgLayout;
     EditText sms;
 
@@ -109,7 +109,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
 
         if (!addMode && groupNameStr != null) {
             groupName.setText(groupNameStr);
-            new QueryByIdSqliteTask(this, this, new ContactGroup(), selectedGroupId, QUERY_GROUP_BY_ID_REQUEST)
+            new QueryByIdSqliteTask<Long>(this, this, new ContactGroup(), selectedGroupId, QUERY_GROUP_BY_ID_REQUEST)
                     .execute();
         }
         setTitle("Add Group");
@@ -163,7 +163,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                 selectedGroupId = generatedId;
                 GroupContactJunction gcj = new GroupContactJunction();
                 gcj.setContactGroupId(selectedGroupId);
-                gcj.setContactId(selectedContactId);
+                gcj.setPhone(selectedPhone);
                 gcj.create(AddEditGroupActivity.this);
                 //selectedContactId = -1;
                 addMode = false;
@@ -197,10 +197,10 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             dialog.dismiss();
         } else if (requestType == QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST) {
             if (entities != null) {
-                selectedContactIds.removeAll(selectedContactIds);
+                selectedPhones.removeAll(selectedPhones);
                 for (Object gcj : entities) {
-                    selectedContactIds.add(((GroupContactJunction) gcj).getContactId());
-                    Log.e(TAG, "selected contact id:" + ((GroupContactJunction) gcj).getContactId());
+                    selectedPhones.add(((GroupContactJunction) gcj).getPhone());
+                    Log.e(TAG, "selected contact id:" + ((GroupContactJunction) gcj).getPhone());
                 }
             }
             Log.e(TAG, "requestType == QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST. initCompleted to true");
@@ -229,12 +229,12 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             cbxL.removeAllViews();
             CheckBox cbx = new CheckBox(AddEditGroupActivity.this);
             cbxL.addView(cbx);
-            Log.e(TAG, "selected contactsids:" + selectedContactIds);
+            Log.e(TAG, "selected contactsids:" + selectedPhones);
             cbx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.e(TAG, "setOnCheckedChangeListener.isChecked:" + isChecked + ", contact:"
-                            + contact.getId() + ", IC:" + initCompleted[0]);
+                            + contact.getPhone() + ", IC:" + initCompleted[0]);
                     if (initCompleted[0]) {
                         if (isChecked) {
                             if (Utility.isEmpty(groupName.getText().toString().trim())) {
@@ -248,7 +248,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                                     Log.e(TAG, "Creating a new junction.");
                                     final GroupContactJunction gcj = new GroupContactJunction();
                                     gcj.setContactGroupId(selectedGroupId);
-                                    gcj.setContactId(contact.getId());
+                                    gcj.setPhone(contact.getPhone());
                                     new AsyncTask<Void, Void, Void>() {
 
                                         @Override
@@ -262,22 +262,22 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                                     ContactGroup grp = new ContactGroup();
                                     grp.setGroupName(groupName.getText().toString().trim());
                                     addModeBeingConvertedToEditMode = true;
-                                    selectedContactId = contact.getId();
+                                    selectedPhone = contact.getPhone();
                                     new InsertSqliteTask(AddEditGroupActivity.this, AddEditGroupActivity.this,
                                             grp, INSERT_GROUP_REQUEST).execute();
 
                                 }
-                                selectedContactIds.add(contact.getId());
+                                selectedPhones.add(contact.getPhone());
                             }
                         } else if (!isChecked) {
-                            Log.e(TAG, "Removing a junction." + contact.getId());
+                            Log.e(TAG, "Removing a junction." + contact.getPhone());
                             new AsyncTask<Void, Void, Void>() {
 
                                 @Override
                                 protected Void doInBackground(Void... params) {
-                                    new GroupContactJunction().deleteByContactGroupIdContactId(AddEditGroupActivity.this,
-                                            selectedGroupId, contact.getId());
-                                    selectedContactIds.remove(new Long(contact.getId()));
+                                    new GroupContactJunction().deleteByContactGroupIdAndPhone(AddEditGroupActivity.this,
+                                            selectedGroupId, contact.getPhone());
+                                    selectedPhones.remove(new Long(contact.getPhone()));
                                     return null;
                                 }
                             }.execute();
@@ -291,7 +291,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             name.setText(contact.getName());
             phone.setText(contact.getPhone());
 
-            if (selectedContactIds.contains(contact.getId())) {
+            if (selectedPhones.contains(contact.getPhone())) {
                 initCompleted[0] = false;
                 cbx.setChecked(true);
             } else {
