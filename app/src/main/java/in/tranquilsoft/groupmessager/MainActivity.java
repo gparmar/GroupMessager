@@ -1,11 +1,16 @@
 package in.tranquilsoft.groupmessager;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,15 +24,27 @@ import in.tranquilsoft.groupmessager.consumer.MultiResultSqliteConsumer;
 import in.tranquilsoft.groupmessager.consumer.SingleResultSqliteConsumer;
 import in.tranquilsoft.groupmessager.model.DefaultEntity;
 import in.tranquilsoft.groupmessager.model.impl.ContactGroup;
+import in.tranquilsoft.groupmessager.model.impl.MessageSentStatus;
 import in.tranquilsoft.groupmessager.task.ContactsGathererTask;
+import in.tranquilsoft.groupmessager.task.QueryForAllGroupsSqliteTask;
 import in.tranquilsoft.groupmessager.task.QueryForAllIdSqliteTask;
 import in.tranquilsoft.groupmessager.util.Constants;
 
 public class MainActivity extends DefaultActivity implements SingleResultSqliteConsumer,
         MultiResultSqliteConsumer {
+    public static final String CONTACT_PHONE_NUMBER = "CONTACT_PHONE_NUMBER";
+    public static final String CONTACT_NAME = "CONTACT_NAME";
+    public static final String PHONE = "PHONE";
+    public static final String CONTACT_GROUP_ID = "CONTACT_GROUP_ID";
+    public static final String HISTORY_ID = "HISTORY_ID";
     public static final int QUERY_BY_ID_FOR_GROUP = 101;
     public static final int QUERY_FOR_ALL_GROUP = 102;
+    public static final String SENT_ACTION = "SENT";
+    public static final String DELIVERED_ACTION = "DELIVERED";
     String TAG = "MainActivity";
+
+    MySentBroadcastReceiver sentBroadcastReceiver = new MySentBroadcastReceiver();
+    MyDeliveryBroadcastReceiver deliveryBroadcastReceiver = new MyDeliveryBroadcastReceiver();
 
     ListView groups;
     List<ContactGroup> contactGroups;
@@ -59,6 +76,7 @@ public class MainActivity extends DefaultActivity implements SingleResultSqliteC
                 Intent addGroup = new Intent(MainActivity.this, AddEditGroupActivity.class);
                 addGroup.putExtra(Constants.GROUP_ID, grp.getGroupId());
                 addGroup.putExtra(Constants.GROUP_NAME, grp.getGroupName());
+                addGroup.putExtra(Constants.CONTACT_COUNT, grp.getContactsCount());
                 addGroup.putExtra(Constants.ADD_MODE, false);
                 startActivity(addGroup);
             }
@@ -70,6 +88,10 @@ public class MainActivity extends DefaultActivity implements SingleResultSqliteC
     protected void onResume() {
         super.onResume();
 
+        //Register the Broadcast recievers for sent and delivered smses
+        registerReceiver(sentBroadcastReceiver, new IntentFilter(SENT_ACTION));
+        registerReceiver(deliveryBroadcastReceiver, new IntentFilter(DELIVERED_ACTION));
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean contactsCollected = prefs.getBoolean(Constants.PROPERTY_CONTACTS_COLLECTED, false);
 
@@ -80,7 +102,7 @@ public class MainActivity extends DefaultActivity implements SingleResultSqliteC
             Log.e(TAG, "Contacts were collected. Skipping it now...");
         }
 
-        new QueryForAllIdSqliteTask<ContactGroup>(this, this, new ContactGroup(), QUERY_FOR_ALL_GROUP).execute();
+        new QueryForAllGroupsSqliteTask(this, this, new ContactGroup(), QUERY_FOR_ALL_GROUP).execute();
     }
 
     @Override
@@ -105,7 +127,8 @@ public class MainActivity extends DefaultActivity implements SingleResultSqliteC
             contactGroups = entities;
             List<String> groupNames = new ArrayList<>();
             for (ContactGroup ent : contactGroups) {
-                groupNames.add(((ContactGroup) ent).getGroupName());
+                ContactGroup cg = (ContactGroup) ent;
+                groupNames.add(cg.getGroupName() + " ("+cg.getContactsCount()+")");
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                     groupNames);
@@ -116,5 +139,68 @@ public class MainActivity extends DefaultActivity implements SingleResultSqliteC
     @Override
     public boolean showEditMenuOption() {
         return false;
+    }
+
+    public class MySentBroadcastReceiver extends BroadcastReceiver {
+        public MySentBroadcastReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long historyId = intent.getLongExtra(HISTORY_ID, -1);
+
+            List<MessageSentStatus> msses = new MessageSentStatus().getByHistoryId(context, historyId);
+            //MessageSentStatus mss = new MessageSentStatus().getByHistoryIdAndPhone(context, historyId, phone);
+            String result = null;
+            switch (getResultCode()) {
+
+                case Activity.RESULT_OK:
+                    result = "Transmission successful";
+                    break;
+                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                    result = "Transmission failed";
+                    break;
+                case SmsManager.RESULT_ERROR_RADIO_OFF:
+                    result = "Radio off";
+                    break;
+                case SmsManager.RESULT_ERROR_NULL_PDU:
+                    result = "No PDU defined";
+                    break;
+                case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    result = "No service";
+                    break;
+            }
+            if (msses != null && msses.size()>0) {
+                for (MessageSentStatus mss: msses) {
+                    if (result.equals("Transmission successful")) {
+                        mss.setSentStatus(Constants.TRUE);
+                    } else {
+                        mss.setSentStatus(Constants.FALSE);
+                    }
+                    mss.update(context);
+                }
+            }
+
+        }
+    }
+
+    public class MyDeliveryBroadcastReceiver extends BroadcastReceiver {
+        public MyDeliveryBroadcastReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long historyId = intent.getLongExtra(HISTORY_ID, -1);
+
+//            MessageSentStatus mss = new MessageSentStatus().getByHistoryIdAndPhone(context, historyId, phone);
+            List<MessageSentStatus> msses = new MessageSentStatus().getByHistoryId(context, historyId);
+            if (msses != null && msses.size()>0) {
+                for (MessageSentStatus mss : msses) {
+                    mss.setDeliveredAt(System.currentTimeMillis());
+                    mss.setDeliveryStatus(Constants.TRUE);
+                    mss.update(context);
+                }
+            }
+        }
     }
 }

@@ -13,25 +13,38 @@ import in.tranquilsoft.groupmessager.model.MySqlLiteHelper;
 public class GroupContactJunction extends AbstractGroupContactJunction {
     static String TAG = "GroupContactJunction";
 
-    public List<GroupContactJunction> getByContactGroup(Context context, long contactGroupId) {
+    public List<String> getByContactGroup(Context context, long contactGroupId) {
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),
                 ContactGroupId_FIELD + "=?", new String[]{String.valueOf(contactGroupId)}, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            List<GroupContactJunction> result = new ArrayList<>();
+            List<String> result = new ArrayList<>();
             do {
-                GroupContactJunction groupContactJunction = new GroupContactJunction();
-                groupContactJunction.setId(cursor.getLong(0));
-                groupContactJunction.setPhone(cursor.getString(1));
-                groupContactJunction.setContactGroupId(cursor.getLong(2));
+                result.add(cursor.getString(1));
 
-                result.add(groupContactJunction);
+                //result.add(groupContactJunction);
             } while (cursor.moveToNext());
             return result;
         }
         return null;
+    }
+
+    public int getSelectedContactCount(Context context, long contactGroupId) {
+        SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select count(*) count from " + TABLE_NAME + " where "
+                + ContactGroupId_FIELD + "=?"
+                , new String[]{contactGroupId + ""});
+
+        if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 0) {
+            try {
+                return cursor.getInt(cursor.getColumnIndex("count"));
+            }
+            catch (Exception e){}
+        }
+        return 0;
     }
 
     public void deleteByContactGroupIdAndPhone(Context context, long contactGrpId, String phone) {

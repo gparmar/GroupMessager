@@ -43,6 +43,8 @@ public abstract class DefaultActivity extends AppCompatActivity {
             return true;
         } else if (id==R.id.action_history){
             historyClicked();
+        } else if (id==R.id.action_delete){
+            deleteClicked();
         }
 //        else if (id==R.id.action_debug){
 //            new Contact().getByContactGrpId(this, 1l);
@@ -62,11 +64,15 @@ public abstract class DefaultActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem saveItem = menu.findItem(R.id.action_save);
         MenuItem editItem = menu.findItem(R.id.action_compose);
+        MenuItem deleteItem = menu.findItem(R.id.action_delete);
         if (!showSaveMenuOption()) {
             saveItem.setVisible(false);
         }
         if (!showEditMenuOption()) {
             editItem.setVisible(false);
+        }
+        if (!showDeleteMenuOption()) {
+            deleteItem.setVisible(false);
         }
         //MenuItem refreshItem = menu.findItem(R.id.action_refresh);
 
@@ -77,6 +83,9 @@ public abstract class DefaultActivity extends AppCompatActivity {
     public abstract boolean showSaveMenuOption();
 
     public abstract boolean showEditMenuOption();
+    public boolean showDeleteMenuOption(){
+        return false;
+    }
 
     //public abstract boolean showRefreshMenuOption();
     public void saveClicked() {
@@ -84,6 +93,9 @@ public abstract class DefaultActivity extends AppCompatActivity {
     }
 
     public void editClicked() {
+
+    }
+    public void deleteClicked() {
 
     }
 }

@@ -167,7 +167,7 @@ public class HistoryActivity extends DefaultActivity implements MultiResultSqlit
             TableRow header = (TableRow)
                     getLayoutInflater().inflate(R.layout.history_status_header, parent, false);
             table.addView(header);
-            List<MessageSentStatus> msss = new MessageSentStatus().getHistoryId(context, mh.getId());
+            List<MessageSentStatus> msss = new MessageSentStatus().getByHistoryId(context, mh.getId());
             for(MessageSentStatus mss: msss) {
                 TableRow item = (TableRow)
                         getLayoutInflater().inflate(R.layout.history_status_item, parent, false);

@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,7 +57,9 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
     public static final int QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST = 205;
     EditText groupName;
     LinearLayout container;
+    AutoCompleteTextView searchBx;
     ListView contacts;
+    List<Contact> allContacts;
 
     boolean addMode = true;
     long selectedGroupId = -1;
@@ -68,6 +72,10 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
     List<String> selectedPhones = new ArrayList<>();
     LinearLayout sendMsgLayout;
     EditText sms;
+    private ImageView closeSearchIcon;
+    private ImageView searchIcon;
+    private boolean searchMode;
+    int contactsCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +86,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             addMode = getIntent().getExtras().getBoolean(Constants.ADD_MODE, true);
             groupNameStr = getIntent().getExtras().getString(Constants.GROUP_NAME, null);
             selectedGroupId = getIntent().getExtras().getLong(Constants.GROUP_ID, -1);
+            contactsCount = getIntent().getExtras().getInt(Constants.CONTACT_COUNT, 0);
         } catch (Exception e) {
 
         }
@@ -89,6 +98,12 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
         sms = (EditText) findViewById(R.id.sms);
         Button sendBtn = (Button) findViewById(R.id.sendBtn);
         Button closeBtn = (Button) findViewById(R.id.closeBtn);
+        searchBx = (AutoCompleteTextView)findViewById(R.id.searchBx);
+        searchBx.setThreshold(1);
+        searchBx.setAdapter(new ContactSearchAdapter(this, selectedGroupId, groupName));
+        closeSearchIcon = (ImageView)findViewById(R.id.closeSearchIcon);
+        searchIcon = (ImageView)findViewById(R.id.searchIcon);
+
 
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,18 +121,34 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
             }
         });
 
+        closeSearchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchBx.setText(null);
+                closeSearchIcon.setVisibility(View.GONE);
+                searchIcon.setVisibility(View.VISIBLE);
+            }
+        });
 
         if (!addMode && groupNameStr != null) {
             groupName.setText(groupNameStr);
             new QueryByIdSqliteTask<Long>(this, this, new ContactGroup(), selectedGroupId, QUERY_GROUP_BY_ID_REQUEST)
                     .execute();
         }
+
+
         setTitle("Add Group");
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        init();
+    }
+
+    private void init(){
         Log.e(TAG, "onResume. Setting initCompleted to false");
         dialog = new ProgressDialog(this);
         dialog.setTitle("Collecting all contacts. Please wait...");
@@ -193,15 +224,27 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
     @Override
     public void performActionOnMultiRowQueryResult(int requestType, List entities) {
         if (requestType == QUERY_GROUP_FOR_ALL_CONTACT_REQUEST) {
-            contacts.setAdapter(new ContactsAdapter(this, R.layout.contacts_list_item, entities));
             dialog.dismiss();
+            allContacts = entities;
+            List<Contact> selectedContacts = new ArrayList<>();
+            if (selectedPhones != null & selectedPhones.size() > 0) {
+                for (Contact c: allContacts) {
+                    if (selectedPhones.contains(c.getPhone())) {
+                        selectedContacts.add(c);
+                    }
+                }
+                if (selectedContacts.size()>0) {
+                    for (Contact c: selectedContacts){
+                        entities.remove(c);
+                    }
+                }
+                entities.addAll(0, selectedContacts);
+            }
+            contacts.setAdapter(new ContactsAdapter(this, R.layout.contacts_list_item, entities));
+
         } else if (requestType == QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST) {
             if (entities != null) {
-                selectedPhones.removeAll(selectedPhones);
-                for (Object gcj : entities) {
-                    selectedPhones.add(((GroupContactJunction) gcj).getPhone());
-                    Log.e(TAG, "selected contact id:" + ((GroupContactJunction) gcj).getPhone());
-                }
+                selectedPhones = entities;
             }
             Log.e(TAG, "requestType == QUERY_GROUP_CONTACT_JUNCTIONS_CONTACT_REQUEST. initCompleted to true");
             new QueryForAllIdSqliteTask<Contact>(this, this, new Contact(),
@@ -268,6 +311,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
 
                                 }
                                 selectedPhones.add(contact.getPhone());
+                                contact.setIsSelected(true);
                             }
                         } else if (!isChecked) {
                             Log.e(TAG, "Removing a junction." + contact.getPhone());
@@ -281,7 +325,7 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
                                     return null;
                                 }
                             }.execute();
-
+                            contact.setIsSelected(false);
                         }
                     } else {
                         initCompleted[0] = true;
@@ -316,5 +360,46 @@ public class AddEditGroupActivity extends DefaultActivity implements InsertDBCon
     @Override
     public void editClicked() {
         sendMsgLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void makeCloseSearchIconVisible(){
+        searchMode = true;
+        closeSearchIcon.setVisibility(View.VISIBLE);
+        searchIcon.setVisibility(View.GONE);
+    }
+    public void makeSearchIconVisible(){
+        searchMode = false;
+        closeSearchIcon.setVisibility(View.GONE);
+        searchIcon.setVisibility(View.VISIBLE);
+        init();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (searchMode) {
+            Utility.hideKeyboard(this, searchBx);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void updateListView(){
+        ((ArrayAdapter)contacts.getAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean showDeleteMenuOption() {
+        return true;
+    }
+
+    @Override
+    public void deleteClicked() {
+        if (selectedGroup != null) {
+            selectedGroup.delete(this);
+
+        } else {
+            new ContactGroup().delete(this);
+        }
+        super.onBackPressed();
     }
 }

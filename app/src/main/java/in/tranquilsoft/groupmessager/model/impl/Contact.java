@@ -15,6 +15,15 @@ public class Contact extends AbstractContact {
     static String TAG = "Contact";
     boolean dirty = false;
     boolean newContact = false;
+    boolean isSelected;
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
 
     public boolean isNewContact() {
         return newContact;
@@ -81,6 +90,31 @@ public class Contact extends AbstractContact {
         }
         return null;
     }
+
+    public List<Contact> getByContactByStartingPhrase(Context context, String phrase) {
+        if (phrase == null) {
+            return null;
+        }
+        SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, getColumns(),
+                Name_FIELD+" like '"+phrase+"%'", null, null, null, Contact.Name_FIELD + " asc");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            List<Contact> result = new ArrayList<>();
+            do {
+                Contact contact = new Contact();
+                contact.setPhone(cursor.getString(0));
+                contact.setName(cursor.getString(1));
+                contact.setGroupId(cursor.getLong(2));
+
+                result.add(contact);
+            } while (cursor.moveToNext());
+            return result;
+        }
+        return null;
+    }
+
 
     public void deleteAll(Context context) {
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getWritableDatabase();

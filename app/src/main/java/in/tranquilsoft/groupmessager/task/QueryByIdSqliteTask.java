@@ -38,6 +38,8 @@ public class QueryByIdSqliteTask<ID> extends AsyncTask<Void, Void, DefaultEntity
     @Override
     protected void onPostExecute(DefaultEntity entity) {
         Log.i(TAG, "Got result:" + entity);
-        sqliteConsumer.performActionOnQueryResult(requestType, entity);
+        if (sqliteConsumer != null) {
+            sqliteConsumer.performActionOnQueryResult(requestType, entity);
+        }
     }
 }

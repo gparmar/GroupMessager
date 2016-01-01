@@ -52,7 +52,7 @@ public class MessageSentStatus extends AbstractMessageSentStatus {
         return null;
     }
 
-    public List<MessageSentStatus> getHistoryId(Context context, long historyId) {
+    public List<MessageSentStatus> getByHistoryId(Context context, long historyId) {
         SQLiteDatabase db = MySqlLiteHelper.getInstance(context).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, getColumns(),

@@ -32,7 +32,9 @@ public class QueryForAllIdSqliteTask<T> extends AsyncTask<Void, Void, List<T>> {
 
     @Override
     protected void onPostExecute(List<T> entities) {
-        sqliteConsumer.performActionOnMultiRowQueryResult(requestType, entities);
+        if (sqliteConsumer != null) {
+            sqliteConsumer.performActionOnMultiRowQueryResult(requestType, entities);
+        }
     }
 
 }

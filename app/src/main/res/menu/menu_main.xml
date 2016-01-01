@@ -5,8 +5,10 @@
         android:orderInCategory="101" app:showAsAction="always" android:title="@string/action_compose"/>
     <item android:id="@+id/action_save" android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="102" app:showAsAction="always" android:title="@string/action_save"/>
+    <item android:id="@+id/action_delete" android:icon="@android:drawable/ic_menu_delete"
+        android:orderInCategory="104" app:showAsAction="always" android:title="@string/action_delete"/>
     <item android:id="@+id/action_history"
-        android:orderInCategory="103" app:showAsAction="never" android:title="@string/action_history"/>
+        android:orderInCategory="105" app:showAsAction="never" android:title="@string/action_history"/>
     <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
         <!--android:orderInCategory="105" app:showAsAction="never" />-->
     <item android:id="@+id/action_refresh" android:title="@string/action_refresh"

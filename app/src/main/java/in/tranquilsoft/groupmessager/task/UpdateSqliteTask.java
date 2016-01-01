@@ -43,7 +43,9 @@ public class UpdateSqliteTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         Log.e(TAG, "error:" + error);
-        sqliteConsumer.performOnUpdateResult(requestType,
-                error != null ? InsertDBConsumer.FAILED : InsertDBConsumer.SUCCESS, error);
+        if (sqliteConsumer != null) {
+            sqliteConsumer.performOnUpdateResult(requestType,
+                    error != null ? InsertDBConsumer.FAILED : InsertDBConsumer.SUCCESS, error);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package in.tranquilsoft.groupmessager.task;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import java.util.List;
 
@@ -10,23 +11,32 @@ import in.tranquilsoft.groupmessager.model.impl.GroupContactJunction;
 /**
  * Created by gurdevp on 05/12/15.
  */
-public class QueryForGrpContactJunctionsByGrpIdSqliteTask extends QueryForAllIdSqliteTask<GroupContactJunction> {
+public class QueryForGrpContactJunctionsByGrpIdSqliteTask extends AsyncTask<Void, Void, List<String>> {
     private long groupId;
-
+    private GroupContactJunction entity;
+    Context context;
+    MultiResultSqliteConsumer sqliteConsumer;
+    int requestType;
     public QueryForGrpContactJunctionsByGrpIdSqliteTask(Context context, MultiResultSqliteConsumer sqliteConsumer,
                                                         GroupContactJunction entity, int requestType, long grpId) {
-        super(context, sqliteConsumer, entity, requestType);
+        this.context = context;
         this.groupId = grpId;
+        this.sqliteConsumer = sqliteConsumer;
+        this.entity = entity;
+        this.requestType = requestType;
+
     }
 
     @Override
-    protected List<GroupContactJunction> doInBackground(Void... params) {
+    protected List<String> doInBackground(Void... params) {
         return entity.getByContactGroup(context, groupId);
     }
 
     @Override
-    protected void onPostExecute(List<GroupContactJunction> entities) {
-        sqliteConsumer.performActionOnMultiRowQueryResult(requestType, entities);
+    protected void onPostExecute(List<String> entities) {
+        if (sqliteConsumer != null) {
+            sqliteConsumer.performActionOnMultiRowQueryResult(requestType, entities);
+        }
     }
 
 }

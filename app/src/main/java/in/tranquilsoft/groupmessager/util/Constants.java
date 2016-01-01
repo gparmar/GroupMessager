@@ -11,5 +11,6 @@ public interface Constants {
     String PROPERTY_CONTACTS_COLLECTED = "PROPERTY_CONTACTS_COLLECTED";
     String ADD_MODE = "ADD_MODE";
     String GROUP_NAME = "GROUP_NAME";
+    String CONTACT_COUNT = "CONTACT_COUNT";
     String GROUP_ID = "GROUP_ID";
 }
